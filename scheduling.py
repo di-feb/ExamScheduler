@@ -3,33 +3,35 @@ import csp
 
 def get_rows(filename):
     data = list()
-    file =  open(filename, mode="r", encoding='utf-8-sig')
+    file =  open(filename, mode="r", encoding='UTF8')
     reader = csv.reader(file)
     header =next(reader)
     if header:
         for row in reader:
             data.append(row)
+    file.close()
     return data
 
 
 
 def create_courses_for_labs(filename):
-    file =  open(filename, mode="r+", encoding='utf-8-sig')
+    file =  open(filename, mode="r+", encoding="UTF8")
     csvwriter = csv.writer(file) 
     reader = csv.reader(file)
+    lab = list()
     for row in reader:
-        if row[4] == 'TRUE':
-            csvwriter.writerow([row[0], row[1] + "_lab", row[2], row[3], "FALSE"])
-            # data.append([row[0], row[1] + "_lab", row[2], row[3], "FALSE"])
+        if row[4] == "TRUE":
+            lab.append([1, row[1] + "_lab", row[2], "FALSE", "FALSE"])
+    csvwriter.writerows(lab)
 
     file.close()
 
 
-def getNames(data):
-    names = list()
+def getCourses(data):
+    courses = list()
     for row in data:
-        names.append(row[1])
-    return names
+        courses.append(row[1])
+    return courses
 
 # Finds the semester that a specific course is taught.
 def find_semester(course, data):
@@ -67,71 +69,73 @@ class Scheduling(csp.CSP):
         timeslots = 3
         days = 21
         self.variables = list()
+        values = list()
         self.domains = dict()
         self.neighbors = dict()
 
+        # Φτιαξε τα values
+        for i in range(1, days + 1):
+            for j in range(1, timeslots + 1):
+                values.append((i,j))
+
         # Φτιαξε τα variables
-        for i in range(1, timeslots + 1):
-            for j in range(1, days + 1):
-                self.variables.append((i,j))
+        self.variables = getCourses(data)
 
         # Φτιαξε τα domains
         for var in self.variables:
-            self.domains[var] = getNames(data)
-        
+            self.domains[var] = values
+
         #Φτιαξε τα neighbors
         for var in self.variables:
             self.neighbors[var] = [] 
+            for var2 in self.variables:
+                if var != var2:
+                    self.neighbors[var].append(var2)
             
-            if(var[0] == 1):
-                for i in range(0, 3):
-                    for j in range(1, days - var[1] + 1):
-                        self.neighbors[var].append((var[0] + i, var[1] + j))
-                    for k in range(1, var[1]):
-                        self.neighbors[var].append((var[0] + i, var[1] - k))
-                    if(var != (var[0] + i, var[1])):
-                        self.neighbors[var].append((var[0] + i, var[1]))
-            elif(var[0] == 2):
-                for i in range(-1, 2):
-                    for j in range(1, days - var[1] + 1):
-                        self.neighbors[var].append((var[0] + i, var[1] + j))
-                    for k in range(1, var[1]):
-                        self.neighbors[var].append((var[0] + i, var[1] - k))
-                    if(var != (var[0] + i, var[1])):
-                        self.neighbors[var].append((var[0] + i, var[1]))
-            else:
-                for i in range(-2, 1):
-                    for j in range(1, days - var[1] + 1):
-                        self.neighbors[var].append((var[0] + i, var[1] + j))
-                    for k in range(1, var[1]):
-                        self.neighbors[var].append((var[0] + i, var[1] - k))
-                    if(var != (var[0] + i, var[1])):
-                        self.neighbors[var].append((var[0] + i, var[1]))        
         csp.CSP.__init__(self, self.variables, self.domains, self.neighbors, self.schedule_constraint)
 
     def schedule_constraint(self, A, a, B, b):
         flag = True
         filename = "lessons.csv"
         data = get_rows(filename)
-        # if(a == b and (A != B)):
-        #     flag = False
-        if(A[1] == B[1] and find_semester(a, data) == find_semester(b, data)):
+
+    
+        if(withLab(A, data) and a[1] + 1 == b[1] and a[0] == b[0] and B != A + "_lab"):
             flag = False
-        if(A[1] == B[1] and find_teacher(a, data) == find_teacher(b, data)):
+        if(withLab(B, data) and b[1] + 1 == a[1] and a[0] == b[0] and A != B + "_lab"):
             flag = False
-        if(is_hard(a, data) and is_hard(b, data) and abs(A[1] - B[1]) < 2):
+
+        if(A == B and (a != b)):
             flag = False
-        if(withLab(a, data) and A[0] + 1 == B[0] and A[1] == B[1] and b != a + "_lab"):
+        if(A != B and (a == b)):
             flag = False
+        if(a[0] == b[0] and find_semester(A, data) == find_semester(B, data) and (A != B + "_lab" and B != A + "_lab")):
+            flag = False
+        if(a[0] == b[0] and find_teacher(A, data) == find_teacher(B, data) and (A != B + "_lab" and B != A + "_lab")):
+            flag = False
+        if(is_hard(A, data) and is_hard(B, data) and abs(a[0] - b[0]) < 2 and (A != B + "_lab" and B != A + "_lab")):
+            flag = False
+
+        if( (withLab(A, data) and a[1] == 3 ) or (withLab(B, data) and b[1] == 3) ):
+            flag = False
+        
+     
         return flag
 
-    def display(self, assignment, days):
+    def display(self, assignment, timeslots, filename):
+
+        data = get_rows(filename)
         counter = 0
+        assignment = dict(sorted(assignment.items(), key=lambda item: item[1]))
         items = assignment.items()
         for item in items:
-            print(item, end=" ")
+            print(item, end = " ")
+            print(find_semester(item[0], data), end = " ")
+            print(find_teacher(item[0], data), end = " ")
+            print(is_hard(item[0], data), end = " ")
+            print(withLab(item[0], data))
             counter = counter + 1
-            if(counter == days):
+            if(counter == timeslots):
                 print("\n")
                 counter = 0
 
@@ -144,9 +148,9 @@ class Scheduling(csp.CSP):
 
 if __name__ == "__main__":
     filename = 'lessons.csv'
+    # create_courses_for_labs(filename)
     data = get_rows(filename)
-    days = 21
-
+    timeslots = 3
     Schedule = Scheduling(data)
 
     assignment = dict()
@@ -157,36 +161,4 @@ if __name__ == "__main__":
 
     assignment = csp.backtracking_search(Schedule)
     # assignments = csp.forward_checking(Schedule, tuple(Schedule.getVar()), Schedule.getDomains, assignment, removals)
-    Schedule.display(assignment, days)
-
-
-
-# def schedule_constraint(self, schedule):
-#     # Δεν υπαρχει μαθημα του ιδιου εξαμηνου που να εξεταζεται την ιδια μερα.
-#     different_semester = True
-#     different_teacher = True
-#     twoHard_inTwoDays = True
-#     lab_after_theory = True
-#     counter = 0
-#     days = 21
-#     while counter < days:
-#         if( find_semester(schedule[0][counter]) == find_semester(schedule[1][counter]) and 
-#             find_semester(schedule[1][counter]) == find_semester(schedule[2][counter]) and 
-#             find_semester(schedule[0][counter]) == find_semester(schedule[2][counter]) ):
-#             different_semester  = False
-#         if(find_teacher(schedule[0][counter]) == find_teacher(schedule[1][counter]) and 
-#             find_teacher(schedule[1][counter]) == find_teacher(schedule[2][counter]) and 
-#             find_teacher(schedule[0][counter]) == find_teacher(schedule[2][counter]) ):
-#             different_semester  = False
-#         if(is_hard(schedule[0][counter]) or is_hard(schedule[1][counter]) or is_hard(schedule[2][counter])):
-#             if(is_hard(schedule[0][counter + 1]) or is_hard(schedule[1][counter + 1]) or is_hard(schedule[2][counter + 1]) 
-#             or is_hard(schedule[0][counter + 2]) or is_hard(schedule[1][counter + 2]) or is_hard(schedule[2][counter + 2])):
-#                 twoHard_inTwoDays = False
-#         if(withLab(schedule[2][counter])):
-#             lab_after_theory = False
-#         elif(withLab(schedule[1][counter]) and schedule[2][counter] != schedule[1][counter] + "_lab"):
-#             lab_after_theory = False
-#         elif(withLab(schedule[0][counter]) and schedule[1][counter] != schedule[1][counter] + "_lab"):
-#             lab_after_theory = False
-
-#     return different_semester and different_teacher and twoHard_inTwoDays and lab_after_theory 
+    Schedule.display(assignment, timeslots, filename)
