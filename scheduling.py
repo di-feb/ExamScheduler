@@ -1,5 +1,27 @@
 import csv
+import time
 import csp
+
+def domWdeg(assignment, Csp):
+    weights = dict()
+    for var in Csp.variables:
+        weights[var] = 1
+    for var in csp.variables:
+        for B in csp.neighbors[var]:
+            if B not in assignment:
+                for b in csp.curr_domains[B][:]:
+                        for val in csp.domains[var]:
+                            if csp.constraints(var, val, B, b):
+                                weights[var] = weights[var] + 1
+    # for var in Csp.variables:
+    #     weights[var] = csp.count(csp.nconflicts(var, val, assignment) == 0 for val in Csp.domains[var])
+    for var in Csp.variables:
+        weights[var] = weights[var] / Csp.domains[var]
+    res = min(weights, key=weights.get)
+    return res
+
+
+
 
 def get_rows(filename):
     data = list()
@@ -21,7 +43,7 @@ def create_courses_for_labs(filename):
     lab = list()
     for row in reader:
         if row[4] == "TRUE":
-            lab.append([1, row[1] + "_lab", row[2], "FALSE", "FALSE"])
+            lab.append([row[0], row[1] + "_lab", row[2], "FALSE", "FALSE"])
     csvwriter.writerows(lab)
 
     file.close()
@@ -61,6 +83,12 @@ def withLab(course, data):
                 return True
     return False
 
+def isLab(course, data):
+    for row in data:
+        if row[1] == course:
+            if course[-4:] == "_lab":
+                return True
+    return False
 
 class Scheduling(csp.CSP):
 
@@ -69,21 +97,21 @@ class Scheduling(csp.CSP):
         timeslots = 3
         days = 21
         self.variables = list()
-        values = list()
+        self.values = list()
         self.domains = dict()
         self.neighbors = dict()
 
         # Φτιαξε τα values
         for i in range(1, days + 1):
             for j in range(1, timeslots + 1):
-                values.append((i,j))
+                self.values.append((i,j))
 
         # Φτιαξε τα variables
         self.variables = getCourses(data)
 
         # Φτιαξε τα domains
         for var in self.variables:
-            self.domains[var] = values
+            self.domains[var] = self.values
 
         #Φτιαξε τα neighbors
         for var in self.variables:
@@ -95,32 +123,67 @@ class Scheduling(csp.CSP):
         csp.CSP.__init__(self, self.variables, self.domains, self.neighbors, self.schedule_constraint)
 
     def schedule_constraint(self, A, a, B, b):
-        flag = True
         filename = "lessons.csv"
         data = get_rows(filename)
-
-    
-        if(withLab(A, data) and a[1] + 1 == b[1] and a[0] == b[0] and B != A + "_lab"):
-            flag = False
-        if(withLab(B, data) and b[1] + 1 == a[1] and a[0] == b[0] and A != B + "_lab"):
-            flag = False
+        
 
         if(A == B and (a != b)):
-            flag = False
+            return False
         if(A != B and (a == b)):
-            flag = False
-        if(a[0] == b[0] and find_semester(A, data) == find_semester(B, data) and (A != B + "_lab" and B != A + "_lab")):
-            flag = False
-        if(a[0] == b[0] and find_teacher(A, data) == find_teacher(B, data) and (A != B + "_lab" and B != A + "_lab")):
-            flag = False
-        if(is_hard(A, data) and is_hard(B, data) and abs(a[0] - b[0]) < 2 and (A != B + "_lab" and B != A + "_lab")):
-            flag = False
+            return False
+
+        if(a[0] == b[0] and find_semester(A, data) == find_semester(B, data)):
+            if(A != B + "_lab" and B != A + "_lab"):
+                return False
+
+        if(a[0] == b[0] and find_teacher(A, data) == find_teacher(B, data)):
+            if(A != B + "_lab" and B != A + "_lab"):
+                return False
+
+
+        if(is_hard(A, data) and is_hard(B, data) and abs(a[0] - b[0]) < 2):
+            if(A != B + "_lab" and B != A + "_lab"):
+                return False
+
+        if(withLab(A, data) and (a[1] + 1) == b[1] and a[0] == b[0]):
+            if(B != (A + "_lab")):
+                return False
+        
+        if(withLab(B, data) and (b[1] + 1) == a[1] and a[0] == b[0]):
+            if(A != (B + "_lab")):
+                return False
+        
+        if(withLab(A, data) and ((a[1] + 1) != b[1] or a[0] != b[0])):
+            if(B == (A + "_lab")):
+                return False
+        
+        if(withLab(B, data) and ((b[1] + 1) != a[1] or a[0] != b[0])):
+            if(A == (B + "_lab")):
+                return False
+
+        if(isLab(B, data) and (b[1] == (a[1] + 1)) and (a[0] == b[0])):
+            if(B != (A + "_lab")):
+                return False
+
+        if(isLab(A, data) and a[1] == (b[1] + 1) and a[0] == b[0]):
+            if(A != (B + "_lab")):
+                return False
+
+        if(isLab(B, data) and ((b[1] != (a[1] + 1)) or ( a[0] != b[0]))):
+            if(B == (A + "_lab")):
+                return False
+
+        if(isLab(A, data) and ((a[1] != (b[1] + 1)) or (a[0] != b[0]))):
+            if(A == (B + "_lab")):
+                return False
 
         if( (withLab(A, data) and a[1] == 3 ) or (withLab(B, data) and b[1] == 3) ):
-            flag = False
+            return False
         
-     
-        return flag
+        if((isLab(A, data) and a[1] == 1 ) or (isLab(B, data) and b[1] == 1 )):
+            return False
+        
+        return True
 
     def display(self, assignment, timeslots, filename):
 
@@ -143,6 +206,8 @@ class Scheduling(csp.CSP):
         return self.variables
     def getDomains(self):
         return self.domains
+    def getValues(self):
+        return self.values
 
 
 
@@ -150,15 +215,21 @@ if __name__ == "__main__":
     filename = 'lessons.csv'
     # create_courses_for_labs(filename)
     data = get_rows(filename)
-    timeslots = 3
+
     Schedule = Scheduling(data)
-
-    assignment = dict()
-    for var in Schedule.getVar():
-            assignment[var] = ""
-
     removals = list()
 
-    assignment = csp.backtracking_search(Schedule)
-    # assignments = csp.forward_checking(Schedule, tuple(Schedule.getVar()), Schedule.getDomains, assignment, removals)
+    print("Backtracking Algorithm")
+
+    begin = time.time()
+
+    # assignment = csp.backtracking_search(Schedule)
+    assignment = csp.backtracking_search(Schedule, csp.mrv, csp.lcv)
+    # assignment = csp.backtracking_search(Schedule, csp.mrv, csp.lcv, csp.forward_checking)
+    # assignment = csp.min_conflicts(Schedule)
+
+    end = time.time()
+
+    timeslots = 3
     Schedule.display(assignment, timeslots, filename)
+    print("Total time is: " + str(end - begin))
