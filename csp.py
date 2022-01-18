@@ -8,6 +8,8 @@ from collections import defaultdict, Counter
 from functools import reduce
 from operator import eq, neg
 
+from sortedcontainers import SortedSet
+
 import search
 from utils import argmin_random_tie, count, first, extend
 
@@ -221,6 +223,7 @@ def AC3b(csp, queue=None, removals=None, arc_heuristic=dom_j_up):
         # Dj - Sj_p = Sj_u values are unknown, as yet, to be supported by Xi
         Si_p, Sj_p, Sj_u, checks = partition(csp, Xi, Xj, checks)
         if not Si_p:
+            csp.weight[(Xi, Xk)] += 1 #Update the weights for dom/WDeg
             return False, checks  # CSP is inconsistent
         revised = False
         for x in set(csp.curr_domains[Xi]) - Si_p:
@@ -388,6 +391,7 @@ def forward_checking(csp, var, value, assignment, removals):
                 if not csp.constraints(var, value, B, b):
                     csp.prune(B, b, removals)
             if not csp.curr_domains[B]:
+                csp.weight[(var, B)] += 1          #Update the weights for dom/WDeg
                 return False
     return True
 
