@@ -2,8 +2,8 @@ import csv
 import time
 import csp
 
-# Βρισκει τις μερες και ωρες που εχουν δεσμευτει για τα μαθηματα που εχουν εργαστηρια
-# και τοποθετει ιδια μερα το επομενο τριωρο το εργαστηριο καθε τετοιου μαθηματος 
+# Finds the days and hours that have been reserved for the courses that have labs
+# and places the lab of each such course the next three hours the same day
 def insertLabs(assignment, data):
     for row in data:
         if row[4] == "TRUE":
@@ -11,14 +11,14 @@ def insertLabs(assignment, data):
             assignment[row[1] + "_lab"] = (value[0], value[1] + 1)
             data.append([row[0], row[1] + "_lab", row[2], "FALSE", "FALSE"])
 
-#Υλοποιηση της dom/wdeg
+# Implementation of dom/wdeg
 def domWdeg(assignment, csp):
     filename = 'lessons.csv'
     data = get_rows(filename)
 
     res = dict()
 
-    # Aρχικοποιηση του dict
+    # Initialization of the dict
     for var in csp.variables:
         res[var] = 1
     
@@ -32,9 +32,7 @@ def domWdeg(assignment, csp):
 
     return result
 
-
-
-# Επιστρεφει τις πληροφοριες του αρχειου csv
+# Returns the information of the csv file
 def get_rows(filename):
     data = list()
     file =  open(filename, mode="r", encoding='UTF8')
@@ -46,9 +44,8 @@ def get_rows(filename):
     file.close()
     return data
 
-
-# Γραφει στο αρχειο csv τα εργαστηρια σαν ξεχωριστα μαθηματα 
-# (δεν χρησιμοποιηθηκε)
+# Writes in the csv file the labs as separate courses
+# (was not used)
 def create_courses_for_labs(filename):
     file =  open(filename, mode="r+", encoding="UTF8")
     csvwriter = csv.writer(file) 
@@ -61,21 +58,21 @@ def create_courses_for_labs(filename):
 
     file.close()
 
-# Επιστρεφει τα ονοματα των μαθηματων (Variables for Scheduling)
+# Returns the names of the courses (Variables for Scheduling)
 def getCourses(data):
     courses = list()
     for row in data:
         courses.append(row[1])
     return courses
 
-# Βρισκει το εξαμηνο το οποιο το _course_ διδασκεται
+# Finds the semester in which the _course_ is taught
 def find_semester(course, data):
     for row in data:
         if row[1] == course:
             return row[0]
     return 0
 
-# Εαν ενα μαθημα ειναι δυσκολο επιστρεφει true
+# If a course is hard it returns true
 def is_hard(course, data):
     for row in data:
         if row[1] == course:
@@ -83,14 +80,14 @@ def is_hard(course, data):
                 return True
     return False
 
-# Βρισκει τον δασκαλο ενος συγκεκριμενου μαθηματος
+# Finds the teacher of a specific course
 def find_teacher(course, data):  
     for row in data:
         if row[1] == course:
             return row[2]
     return 0
 
-# Εαν ενα μαθημα εχει εργαστηριο επιστρεφει true
+# If a course has a lab it returns true
 def withLab(course, data):
     for row in data:
         if row[1] == course:
@@ -98,8 +95,8 @@ def withLab(course, data):
                 return True
     return False
 
-# Εαν ενα μαθημα ειναι εργαστηριο επιστρεφει true()
-#(δεν χρησιμοποιηθηκε)
+# If a course is a lab it returns true
+# (was not used)
 def isLab(course, data):
     for row in data:
         if row[1] == course:
@@ -119,64 +116,63 @@ class Scheduling(csp.CSP):
         self.neighbors = dict()
         self.weight = dict()
 
-
-        # Φτιαξε τα values
+        # Create the values
         for i in range(1, days + 1):
             for j in range(1, timeslots + 1):
                 self.values.append((i,j))
 
-        # Φτιαξε τα variables
+        # Create the variables
         self.variables = getCourses(data)
 
-        # Φτιαξε τα domains
+        # Create the domains
         for var in self.variables:
             self.domains[var] = self.values
 
-        #Φτιαξε τα neighbors
+        # Create the neighbors
         for var in self.variables:
             self.neighbors[var] = [] 
             for var2 in self.variables:
                 if var != var2:
                     self.neighbors[var].append(var2)
 
-        # Φτιαξε τα weights για ολα τα ζευγαρια (var, neighbor) για καθε neighbor της var
-        # και αρχικοποιησετα με 1
+        # Create the weights for all pairs (var, neighbor) for each neighbor of var
+        # and initialize them to 1
         for var in self.variables:
             for neigh in self.neighbors[var]:
                 self.weight[(var, neigh)] = 1
                 
-        # Ορισε το csp
+        # Define the csp
         csp.CSP.__init__(self, self.variables, self.domains, self.neighbors, self.schedule_constraint)
 
-    # Συναρτηση constraint
+    # Constraint function
     def schedule_constraint(self, A, a, B, b):
         filename = "lessons.csv"
         data = get_rows(filename)
         
 
-        # Δυο μεταβλητες δεν μπορουν να εχουν την ιδια τιμη
+        # Two variables cannot have the same value
         if(A == B and (a != b)):
             return False
 
         if(A != B and (a == b)):
             return False
 
-        # Μαθηματα του ιδιου εξαμηνου δεν μπορουν να ειναι την ιδια μερα.
+        # Courses of the same semester cannot be on the same day.
         if(a[0] == b[0] and find_semester(A, data) == find_semester(B, data)):
             return False
 
-        # Μαθηματα του ιδιου καθηγητη δεν μπορουν να ειναι την ιδια μερα.
+        # Courses of the same teacher cannot be on the same day.
         if(a[0] == b[0] and find_teacher(A, data) == find_teacher(B, data)):
             return False
-        # Δυο δυσκολα μαθηματα πρεπει να εχουν τουλαχιστον μια μερα κενη μεταξυ τους.
+        # Two hard courses must have at least one day off between them.
         if(is_hard(A, data) and is_hard(B, data) and abs(a[0] - b[0]) < 2):
             return False
-        # Ενα μαθημα εργαστηριου δεν μπορει να μπει στο τριτο τριωρο.
+        # A lab course cannot be placed in the third hour.
         if((withLab(A, data) and a[1] == 3 ) or (withLab(B, data) and b[1] == 3) ):
             return False
         
-        # Εαν το μαθημα εχει εργαστηριο δεσμευσαι το αμεσως επομενο τριωρο για να μπει
-        # το εργαστηριο του συγκεκριμενου μαθηματος.
+        # If the course has a lab, reserve the next hour to place
+        # the lab of the specific course.
         if(withLab(A, data) and ((a[1] + 1) == b[1]) and (a[0] == b[0])):
             return False
         
@@ -185,8 +181,8 @@ class Scheduling(csp.CSP):
         
         return True
 
-    # Εκτυπωνει το προγραμμα που φτιαχτηκε (οχι ανα μερα) με μορφη:
-    # ('Μαθημα', Ημερα-Τριωρο(Πρωτο, Δευτερο, Τριτο)) Εξαμηνο, Καθηγητης, Δυσκολο, Εργαστηριο
+    # Prints the created schedule (not per day) in the form:
+    # ('Course', Day-Hour(First, Second, Third)) Semester, Teacher, Hard, Lab
     def display(self, assignment, timeslots, data):
 
         counter = 0

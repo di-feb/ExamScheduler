@@ -1,39 +1,39 @@
-﻿Εξάμηνο,Μάθημα,Καθηγητής,Δύσκολο (TRUE/FALSE),Εργαστήριο (TRUE/FALSE)
-1,Γραµµική Άλγεβρα,ΓΙΑΝΝΟΠΟΥΛΟΥ,TRUE,FALSE
-1,Διακριτά Μαθηµατικά,ΑΧΛΙΟΠΤΑΣ,FALSE,FALSE
-1,Εισαγωγή στην Πληροφορική και στις Τηλεπικοινωνίες,ΤΣΑΛΓΑΤΙΔΟΥ,FALSE,FALSE
-1,Λογική Σχεδίαση,ΠΑΣΧΑΛΗΣ,FALSE,FALSE
-1,Εισαγωγή στον Προγραµµατισµό,ΣΤΑΜΑΤΟΠΟΥΛΟΣ,FALSE,TRUE
-3,Ανάλυση ΙΙ,ΓΑΤΖΟΥΡΑ,TRUE,FALSE
-3,Πιθανότητες και στοιχεία Στατιστικής,ΚΑΡΑΛΙΟΠΟΥΛΟΥ,FALSE,FALSE
-3,Αντικειµενοστραφής Προγραµµατισµός,ΚΑΡΑΛΗ,FALSE,TRUE
-3,Σήµατα και Συστήµατα,ΠΑΝΑΓΑΚΗΣ,TRUE,FALSE
-3,Εργαστήριο Κυκλωμάτων και Συστημάτων,ΠΙΝΟ,FALSE,FALSE
-5,Αρχές Γλωσσών Προγραµµατισµού,ΡΟΝΤΟΓΙΑΝΝΗΣ,FALSE,FALSE
-5,Γραφικά Ι ,ΘΕΟΧΑΡΗΣ,FALSE,FALSE
-5,Αριθµητική Ανάλυση,ΤΖΑΦΕΡΗΣ,TRUE,FALSE
-5,Εφαρμοσμένα Μαθηματικά,ΓΑΤΖΟΥΡΑ,FALSE,FALSE
-5,Υλοποίηση Συστημάτων Βάσεων Δεδομένων,ΙΩΑΝΝΙΔΗΣ,TRUE,TRUE
-5,Λειτουργικά Συστήµατα,ΧΑΤΖΗΕΥΘΥΜΙΑΔΗΣ,FALSE,FALSE
-5,Αρχιτεκτονική Υπολογιστών ΙΙ,ΓΚΙΖΟΠΟΥΛΟΣ,TRUE,FALSE
-5,Τεχνητή Νοηµοσύνη (ΤΟ ΚΑΛΥΤΕΡΟ!!!!),ΚΟΥΜΠΑΡΑΚΗΣ,FALSE,TRUE
-5,Σχεδίαση Ψηφιακών Συστηµάτων -VHDL,ΠΑΣΧΑΛΗΣ,FALSE,FALSE
-5,Τηλεπικοινωνιακά Δίκτυα ,ΒΑΡΟΥΤΑΣ,FALSE,FALSE
-5,Ψηφιακή Επεξεργασία Σήµατος,ΑΛΕΞΑΝΔΡΟΠΟΥΛΟΣ,FALSE,FALSE
-5,Δίκτυα Επικοινωνιών ΙΙ,ΜΠΑΛΑΟΥΡΑΣ,FALSE,FALSE
-7,Αλγοριθµική Επιχειρησιακή Έρευνα,ΖΗΣΙΜΟΠΟΥΛΟΣ,FALSE,FALSE
-7,Προηγµένα Θέµατα Αλγορίθµων,ΦΟΥΡΤΟΥΝΕΛΗ,FALSE,FALSE
-7,Ειδικά Θέματα Θεωρητικής Πληροφορικής: Αλγόριθμοι Δομικής Βιοπληροφορικής,ΑΧΛΙΟΠΤΑΣ,FALSE,FALSE
-7,Αλγόριθμοι Βιοπληροφορικής,ΕΜΙΡΗΣ,FALSE,FALSE
-7,Προηγμένοι Επιστημονικοί Υπολογισμοί,ΤΖΑΦΕΡΗΣ,FALSE,FALSE
-7,Υπολογιστική Πολυπλοκότητα,ΓΙΑΝΝΟΠΟΥΛΟΥ,FALSE,FALSE
-7,Ανάπτυξη Λογισµικού για Αλγοριθμικά Προβλήματα,ΕΜΙΡΗΣ,FALSE,FALSE
-7,Ανάπτυξη Λογισµικού για Πληροφοριακά Συστήματα,ΙΩΑΝΝΙΔΗΣ,FALSE,FALSE
-7,Επικοινωνία Ανθρώπου Μηχανής,ΡΟΥΣΣΟΥ,FALSE,FALSE
-7,ΤΠΕ στη Μάθηση (Πληροφορική κ Εκπαίδευση),ΓΟΓΟΥΛΟΥ,FALSE,FALSE
-7,Τεχνητή Νοημοσύνη ΙΙ (ΤΟ ΔΕΥΤΕΡΟ ΚΑΛΥΤΕΡΟ!!!),ΚΟΥΜΠΑΡΑΚΗΣ,TRUE,TRUE
-7,Δοµή και Θεσµοί της Ευρωπαϊκής Ένωσης,ΤΟΛΙΔΗΣ,FALSE,FALSE
-7,Σχεδίαση VLSI Κυκλωµάτων,ΝΙΚΑΣ,FALSE,FALSE
-7,Ειδικά Θέματα Επικοινωνιών και Επεξεργασίας Σήματος: Ενισχυτική μηχανική μάθηση και στοχαστικά παίγνια,ΚΑΛΟΥΠΤΣΙΔΗΣ,FALSE,FALSE
-7,Ανάπτυξη Λογισμικού για Συστήματα Δικτύων και Τηλεπικοινωνιών ,ΜΠΑΛΑΟΥΡΑΣ,FALSE,FALSE
-7,Συστήματα Πληροφορικής και e-Προσβασιμότητα για μαθητές με αναπηρία ,ΠΙΝΟ,FALSE,FALSE
+﻿Semester,Course,Professor,Difficult (TRUE/FALSE),Laboratory (TRUE/FALSE)
+1,Linear Algebra,GIANNOPULOU,TRUE,FALSE
+1,Discrete Mathematics,AXLIOPTAS,FALSE,FALSE
+1,Introduction to Informatics and Telecommunications,TSALGATIDOU,FALSE,FALSE
+1,Logical Design,PASCHALIS,FALSE,FALSE
+1,Introduction to Programming,STAMATOPOULOS,FALSE,TRUE
+3,Analysis II,GATZOURA,TRUE,FALSE
+3,Probabilities and Elements of Statistics,KARALIOPOULOU,FALSE,FALSE
+3,Object-oriented Programming,KARALI,FALSE,TRUE
+3,Signals and Systems,PANAGAKIS,TRUE,FALSE
+3,Laboratory of Circuits and Systems,PINO,FALSE,FALSE
+5,Principles of Programming Languages,RONTOGIANNIS,FALSE,FALSE
+5,Graphics I,THEOHARIS,FALSE,FALSE
+5,Numerical Analysis,TZAFERIS,TRUE,FALSE
+5,Applied Mathematics,GATZOURA,FALSE,FALSE
+5,Implementation of Database Systems,IOANNIDIS,TRUE,TRUE
+5,Operating Systems,HATZIEFTHIMIADIS,FALSE,FALSE
+5,Computer Architecture II,GKIZOPOULOS,TRUE,FALSE
+5,Artificial Intelligence (THE BEST!!!!),KOUMBARAKIS,FALSE,TRUE
+5,Digital Systems Design -VHDL,PASCHALIS,FALSE,FALSE
+5,Telecommunication Networks,VAROUTAS,FALSE,FALSE
+5,Digital Signal Processing,ALEXANDROPOULOS,FALSE,FALSE
+5,Communication Networks II,BALAOURAS,FALSE,FALSE
+7,Algorithmic Operational Research,ZISIMOPOULOS,FALSE,FALSE
+7,Advanced Topics of Algorithms,FOURTOUNELI,FALSE,FALSE
+7,Special Topics of Theoretical Informatics: Structural Bioinformatics Algorithms,AXLIOPTAS,FALSE,FALSE
+7,Bioinformatics Algorithms,EMIRIS,FALSE,FALSE
+7,Advanced Scientific Calculations,TZAFERIS,FALSE,FALSE
+7,Computational Complexity,GIANNOPULOU,FALSE,FALSE
+7,Software Development for Algorithmic Problems,EMIRIS,FALSE,FALSE
+7,Software Development for Information Systems,IOANNIDIS,FALSE,FALSE
+7,Human Machine Communication,ROUSSOU,FALSE,FALSE
+7,ICT in Learning (Informatics and Education),GOGOULOU,FALSE,FALSE
+7,Artificial Intelligence II (THE SECOND BEST!!!),KOUMBARAKIS,TRUE,TRUE
+7,Structure and Institutions of the European Union,TOLIDIS,FALSE,FALSE
+7,VLSI Circuits Design,NIKAS,FALSE,FALSE
+7,Special Topics of Communications and Signal Processing: Reinforcement machine learning and stochastic games,KALOUPTSIDIS,FALSE,FALSE
+7,Software Development for Network and Telecommunication Systems,BALAOURAS,FALSE,FALSE
+7,Informatics Systems and e-Accessibility for students with disabilities,PINO,FALSE,FALSE
