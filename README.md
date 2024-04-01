@@ -1,4 +1,4 @@
-# Scheduling
+# ExamScheduler
 
 The project is part of the course "Artificial Intelligence" at the Department of Informatics and Telecommunications, University of Athens. The purpose of the project is to implement a scheduling application for the winter exam schedule of the Department of Informatics and Telecommunications (DIT) at the University of Athens (UoA). The application uses constraint satisfaction problem (CSP) techniques to generate a schedule that meets various constraints.
 
